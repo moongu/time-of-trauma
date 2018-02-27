@@ -3,7 +3,8 @@
 import opc, time, random
 
 numLEDs = 512
-startIndex = 448 #first light connected to pin 7 starts at index 448
+startIndex = 448 - 64 #first light connected to pin 6 starts at index 448-64
+endIndex = 448 + 30
 client = opc.Client('localhost:7890')
 
 allBlack = [ (0,0,0) ] * numLEDs
@@ -37,14 +38,13 @@ client.put_pixels(allBlack)
 """
 
 
-"""
 for i in range(60):
 	time.sleep(1)
 	pixels = list(allBlack)
 	
-	int1 = random.randint(448,458)
-	int2 = random.randint(448,458)
-	int3 = random.randint(448,458)
+	int1 = random.randint(startIndex, endIndex)
+	int2 = random.randint(startIndex, endIndex)
+	int3 = random.randint(startIndex, endIndex)
 	print(int1, int2, int3)
 
 	pixels[int1] = (255,0,0)
@@ -52,4 +52,3 @@ for i in range(60):
 	pixels[int3] = (0,0,255)
 	
 	client.put_pixels(pixels)
-"""
