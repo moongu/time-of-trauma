@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import opc, time, random, csv
+import opc, time, random, csv, datetime
 
 client = opc.Client('localhost:7890')
 
@@ -65,33 +65,43 @@ print('Finished building data map!')
 
 
 # iterate through minutes of the day
-for minute in range(1440):
-	time.sleep(DELAY)
-	print("minute:", minute)
-	# check if the list at data[minute] is non-empty
-	if data[minute]:
-		"""
-		# test: turn on random lights in different colors 
-		LED_START_INDEX = 384 #first light connected to pin 6 starts at 448 - 64
-		LED_END_INDEX = 448 + 29 + 31
-		pixels = list(COLOR_ALL_BLACK)
-		int1 = random.randint(LED_START_INDEX, LED_END_INDEX)
-		int2 = random.randint(LED_START_INDEX, LED_END_INDEX)
-		int3 = random.randint(LED_START_INDEX, LED_END_INDEX)
-		pixels[int1] = (255,0,0)
-		pixels[int2] = (0,255,0)
-		pixels[int3] = (0,0,255)
-		client.put_pixels(pixels)
-		"""
-		print('crimes at minute', minute, data[minute])
-		
-		pixels = list(COLOR_ALL_BLACK)
-		for crimeDate in data[minute]:
-			# set color for lights whose indices correspond to those dates
-			pixels[DATE_OFFSET + crimeDate] = COLOR_WHITE
-		
-		# load in data to lights
-		client.put_pixels(pixels)
-	else:
-		client.put_pixels(COLOR_ALL_BLACK)
-	time.sleep(DELAY)
+while True:
+	loopStartTime = datetime.datetime.now()
+	for minute in range(1440):
+		t1 = datetime.datetime.now()
+		time.sleep(DELAY)
+		print("minute:", minute)
+		# check if the list at data[minute] is non-empty
+		if data[minute]:
+			"""
+			# test: turn on random lights in different colors 
+			LED_START_INDEX = 384 #first light connected to pin 6 starts at 448 - 64
+			LED_END_INDEX = 448 + 29 + 31
+			pixels = list(COLOR_ALL_BLACK)
+			int1 = random.randint(LED_START_INDEX, LED_END_INDEX)
+			int2 = random.randint(LED_START_INDEX, LED_END_INDEX)
+			int3 = random.randint(LED_START_INDEX, LED_END_INDEX)
+			pixels[int1] = (255,0,0)
+			pixels[int2] = (0,255,0)
+			pixels[int3] = (0,0,255)
+			client.put_pixels(pixels)
+			"""
+			print('crimes at minute', minute, data[minute])
+			
+			pixels = list(COLOR_ALL_BLACK)
+			for crimeDate in data[minute]:
+				# set color for lights whose indices correspond to those dates
+				pixels[DATE_OFFSET + crimeDate] = COLOR_WHITE
+			
+			# load in data to lights
+			client.put_pixels(pixels)
+		else:
+			client.put_pixels(COLOR_ALL_BLACK)
+		time.sleep(DELAY)
+		t2 = datetime.datetime.now()
+		print((t2-t1).total_seconds())
+	loopEndTime = datetime.datetime.now()
+	loopDuration = loopEndTime - loopStartTime
+	print('loop took', loopDuration, 'seconds')
+	print('sleeping for', 1450-loopDuration)
+	time.sleep(1450-loopDuration)
