@@ -18,7 +18,7 @@ COLOR_WHITE = (255,255,255)
 COLOR_RED = (255,0,0)
 
 # define delay between looping through minutes
-DELAY = 0.5 * 0.992
+DELAY = 0.5 * 0.992 
 
 # before doing anything, load in black
 client.put_pixels(COLOR_ALL_BLACK)
@@ -51,18 +51,27 @@ Notes:
 
 row[3]: minutes since start of day
 row[0]: date as integer
+row[7]: rape or sex crime
 """
 
 # initialize dictionary with lists as values
-data = {k: [] for k in range(1440)}
+data = {k: ([]) for k in range(1440)}
+
+
 
 # go through csv input file. per row, add mapping for minutes-since-SOD to crime dates
 for row in reader:
-	data[int(row[3])].append(int(row[0]))
+	index = int(row[3])
+	datelist = data[index]
+	datelist.append((int(row[0]), row[7] == "RAPE"))
 
 infile.close()
 print('Finished building data map!')
 
+def addRGB (rgb1, rgb2): 
+	r1, g1, b1 = rgb1
+	r2, g2, b2 = rgb2
+	return (r1+r2, g1+g2, b1+b2)
 
 # iterate through minutes of the day
 while True:
@@ -72,7 +81,8 @@ while True:
 		time.sleep(DELAY)
 		print("minute:", minute)
 		# check if the list at data[minute] is non-empty
-		if data[minute]:
+		datelist = data[minute]
+		if datelist:
 			"""
 			# test: turn on random lights in different colors 
 			LED_START_INDEX = 384 #first light connected to pin 6 starts at 448 - 64
@@ -86,12 +96,20 @@ while True:
 			pixels[int3] = (0,0,255)
 			client.put_pixels(pixels)
 			"""
-			print('crimes at minute', minute, data[minute])
+			print('crimes at minute', minute, datelist)
 			
 			pixels = list(COLOR_ALL_BLACK)
-			for crimeDate in data[minute]:
+			for crimeDate, isRape in datelist:
 				# set color for lights whose indices correspond to those dates
-				pixels[DATE_OFFSET + crimeDate] = COLOR_WHITE
+				color = COLOR_RED 
+				if isRape : 
+					colorAdd = (85, 0, 0)
+				else:
+					colorAdd = (85, 85, 85)
+				
+				newColor = addRGB(pixels[DATE_OFFSET + crimeDate], colorAdd)
+				pixels[DATE_OFFSET+ crimeDate] = newColor
+				print newColor
 			
 			# load in data to lights
 			client.put_pixels(pixels)
@@ -101,7 +119,7 @@ while True:
 		t2 = datetime.datetime.now()
 		print((t2-t1).total_seconds())
 	loopEndTime = datetime.datetime.now()
-	loopDuration = (loopEndTime - loopStartTime).total_seconds()
+	loopDuration = (loopEndTime - loopStartTime).seconds
 	print('loop took', loopDuration, 'seconds')
-	print('sleeping for', (1450-loopDuration))
+	#print('sleeping for', (1450-loopDuration))
 	time.sleep(1450-loopDuration)
