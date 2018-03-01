@@ -18,7 +18,7 @@ COLOR_WHITE = (255,255,255)
 COLOR_RED = (255,0,0)
 
 # define delay between looping through minutes
-DELAY = 0.5
+DELAY = 0.5 * 0.992
 
 # before doing anything, load in black
 client.put_pixels(COLOR_ALL_BLACK)
@@ -101,7 +101,7 @@ while True:
 		t2 = datetime.datetime.now()
 		print((t2-t1).total_seconds())
 	loopEndTime = datetime.datetime.now()
-	loopDuration = loopEndTime - loopStartTime
+	loopDuration = (loopEndTime - loopStartTime).total_seconds()
 	print('loop took', loopDuration, 'seconds')
-	print('sleeping for', 1450-loopDuration)
+	print('sleeping for', (1450-loopDuration))
 	time.sleep(1450-loopDuration)
