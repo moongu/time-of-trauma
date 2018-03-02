@@ -18,8 +18,7 @@ COLOR_WHITE = (255,255,255)
 COLOR_RED = (255,0,0)
 
 # define delay between looping through minutes
-DELAY = 0.5 * 0.992 
-
+DELAY = 0.5 * 0.992
 # before doing anything, load in black
 client.put_pixels(COLOR_ALL_BLACK)
 
@@ -96,7 +95,7 @@ while True:
 			pixels[int3] = (0,0,255)
 			client.put_pixels(pixels)
 			"""
-			print('crimes at minute', minute, datelist)
+			#print('crimes at minute', minute, datelist)
 			
 			pixels = list(COLOR_ALL_BLACK)
 			for crimeDate, isRape in datelist:
@@ -109,7 +108,7 @@ while True:
 				
 				newColor = addRGB(pixels[DATE_OFFSET + crimeDate], colorAdd)
 				pixels[DATE_OFFSET+ crimeDate] = newColor
-				print newColor
+				#print newColor
 			
 			# load in data to lights
 			client.put_pixels(pixels)
@@ -117,9 +116,10 @@ while True:
 			client.put_pixels(COLOR_ALL_BLACK)
 		time.sleep(DELAY)
 		t2 = datetime.datetime.now()
-		print((t2-t1).total_seconds())
+		#print('for loop took', (t2-t1).total_seconds())
 	loopEndTime = datetime.datetime.now()
 	loopDuration = (loopEndTime - loopStartTime).seconds
 	print('loop took', loopDuration, 'seconds')
-	#print('sleeping for', (1450-loopDuration))
-	time.sleep(1450-loopDuration)
+	if loopDuration <= 1450:
+		print('sleeping for', (1450-loopDuration))
+		time.sleep(1450-loopDuration)

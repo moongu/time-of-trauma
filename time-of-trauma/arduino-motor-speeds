@@ -1,14 +1,5 @@
-single rotation, interleave
-
-1: 45.474 seconds
-10: 18.311 seconds
-255: 15.406 seconds
-
-single rotation, microstep
-
-1: 305.281 seconds
-
---------------------------------
-
-7~8ms per 4076/1440 steps
-one revolution (60 * 67.93 steps) takes 15207~15209ms
+when printing the loop index:
+one loop through the day took 24.224 seconds
+one loop through the day took 15.562
+one loop through the day took 15.561
+(1440 - 15.562) / 1019 = 1397.878 ms delay.
